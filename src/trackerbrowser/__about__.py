@@ -1,6 +1,6 @@
 """Allow setuptools_scm to assign version dynamically"""
 
-pkg_name = "python-template"
+pkg_name = "trackerbrowser"
 
 try:
     from importlib.metadata import version, PackageNotFoundError
