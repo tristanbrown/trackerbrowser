@@ -5,7 +5,14 @@ import sqlite3
 
 def connect(path):
     """"""
-    return sqlite3.connect(path)
+    if os.path.isdir(path):
+        return connect_latest(path)
+    else:
+        return connect_file(path)
+
+def connect_file(filepath):
+    """"""
+    return sqlite3.connect(filepath)
 
 def list_backups(directory):
     """"""
@@ -20,4 +27,4 @@ def connect_latest(directory):
     """"""
     filename = get_latest_backup(directory)
     path = os.path.join(directory, filename)
-    return connect(path)
+    return connect_file(path)
