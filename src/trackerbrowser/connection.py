@@ -16,7 +16,7 @@ def connect_file(filepath):
 
 def list_backups(directory):
     """"""
-    r = re.compile(r"TrackAndGraphBackup-\d{8}-\d{6}.db")
+    r = re.compile(r"TrackAndGraphBackup-\d{8}-\d{6}.db$")
     return [fname for fname in os.listdir(directory) if r.match(fname)]
 
 def get_latest_backup(directory):
