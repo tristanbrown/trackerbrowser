@@ -3,29 +3,38 @@
 import pandas as pd
 from .connection import connect
 
-def read_sql(path, query):
+class DB():
     """"""
-    with connect(path) as conn:
-        result = pd.read_sql_query(query, conn)
-    return result
+    def __init__(self, db_path):
+        self.db_path = db_path
 
-def list_tables(path):
-    """"""
-    query = """SELECT name FROM sqlite_schema
-        WHERE type='table' ORDER BY name;"""
-    return read_sql(path, query)
+    def read_sql(self, query):
+        """"""
+        with connect(self.db_path) as conn:
+            result = pd.read_sql_query(query, conn)
+        return result
 
-def get_groups(path):
-    """"""
-    query = """SELECT * FROM groups_table"""
-    return read_sql(path, query)
+    @property
+    def tables(self):
+        """"""
+        query = """SELECT name FROM sqlite_schema
+            WHERE type='table' ORDER BY name;"""
+        return self.read_sql(query)
 
-def get_trackers(path):
-    """"""
-    query = """SELECT * FROM features_table"""
-    return read_sql(path, query)
+    @property
+    def groups(self):
+        """"""
+        query = """SELECT * FROM groups_table"""
+        return self.read_sql(query)
 
-def get_datapoints(path):
-    """"""
-    query = """SELECT * FROM data_points_table"""
-    return read_sql(path, query)
+    @property
+    def trackers(self):
+        """"""
+        query = """SELECT * FROM features_table"""
+        return self.read_sql(query)
+
+    @property
+    def datapoints(self):
+        """"""
+        query = """SELECT * FROM data_points_table"""
+        return self.read_sql(query)
