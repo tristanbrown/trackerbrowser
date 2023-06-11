@@ -50,6 +50,7 @@ class TrackerFileSystem:
     def __init__(self, db_path):
         self.db = DB(db_path)
         self._entities = None
+        self._root = ''
 
     @property
     def entities(self):
@@ -71,7 +72,11 @@ class TrackerFileSystem:
         parts = Path(path).parts
         return (part.replace('/', '') for part in parts)
 
+    def cd(self, path):
+        self._root = path
+
     def ls(self, path=''):
+        path = self._root + path
         split_path = self.path_parts(path)
         result = self.entities
         for segment in split_path:
@@ -97,5 +102,18 @@ class TrackerFileSystem:
             merged['name'] = merged['name_x'] + "/" + merged['name_y']
             merged = merged.rename({'id_y': 'id'}, axis=1)
 
-        result = pd.concat(trackers).rename({'name': 'path'}, axis=1).drop('entity_type', axis=1)
+        result = pd.concat(trackers).rename({'name': 'tracker_path'}, axis=1).drop('entity_type', axis=1)
         return result.sort_values('id').set_index('id')
+
+    def get_data(self, root):
+        tree = self.get_tree(root)
+        tracker_ids = tree.index
+        data = self.db.get_datapoints(tracker_ids)
+        data = pd.merge(
+            how='right',
+            left=tree,
+            right=data,
+            left_index=True,
+            right_on='feature_id',
+        )
+        return data
