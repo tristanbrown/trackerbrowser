@@ -3,6 +3,7 @@
 import pandas as pd
 from pathlib import Path
 from .connection import connect
+from trackerbrowser import util
 
 class DB:
     """"""
@@ -34,10 +35,13 @@ class DB:
         query = """SELECT * FROM features_table"""
         return self.read_sql(query)
 
-    @property
-    def datapoints(self):
+    def get_datapoints(self, ids=None):
         """"""
-        query = """SELECT * FROM data_points_table"""
+        query = """SELECT * FROM data_points_table
+        """
+        if ids is not None:
+            query += f"""WHERE feature_id IN {util.list_for_query(ids)}
+        """
         return self.read_sql(query)
 
 class TrackerFileSystem:
