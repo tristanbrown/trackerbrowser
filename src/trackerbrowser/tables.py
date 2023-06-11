@@ -80,9 +80,13 @@ class TrackerFileSystem:
         split_path = self.path_parts(path)
         result = self.entities
         for segment in split_path:
-            parent_group_id = result.loc[result['name'] == segment].index.to_list()[0]
-            result = self.entities.loc[
-                self.entities['parent_group_id'] == parent_group_id, :].sort_values('display_index')
+            segment_entity = result.loc[result['name'] == segment,:]
+            if segment_entity['entity_type'].to_list()[0] == 'tracker':
+                result = segment_entity
+            else:
+                parent_group_id = segment_entity.index.to_list()[0]
+                result = self.entities.loc[
+                    self.entities['parent_group_id'] == parent_group_id, :].sort_values('display_index')
         return result
 
     def get_tree(self, root):
